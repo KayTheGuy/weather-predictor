@@ -1,0 +1,24 @@
+REPROTS:
+======================================================================================================================================================
+
+1) Deleted the first 16 rows for all GHCN csv files manually and saved them as <data>.csv
+2) Cropped all images to be 256 x 129 and stored in new location. Changed the filename to be yr-month-day-hr-00 
+
+
+
+
+
+
+NOTES:
+======================================================================================================================================================
+
+* GHCN data has been taken HOURLY 
+    from 2016-06-01 00:00  to  2017-06-30 23:00
+* Webcam data has been taken HOURLY
+    from 2016-06-05 06:00  to  2017-06-21 21:00
+
+* columns to exclude from GHCN data:
+    * Year
+    * Month
+    * Day
+    * Time
