@@ -4,7 +4,9 @@ REPROTS:
 1) Deleted the first 16 rows for all GHCN csv files manually and saved them as <data>.csv
 2) Cropped all images to be 256 x 129 and stored in new location. Changed the filename to be yr-month-day-hr-00 
 3) Cleaned weather data. Stored only Date/Time and weather columns. Date/Time as index and weather as target.
-4) Dropped NaN values for weather labels
+4) Remove  weather data before 2016-06-05 and after 2017-06-21 (manually)
+5) Remove  weather data before 6 am and after 9pm (program)
+6) Dropped NaN values for weather labels
 
 
 
@@ -14,10 +16,13 @@ NOTES:
 ======================================================================================================================================================
 
 * GHCN data has been taken HOURLY 
-    from 2016-06-01 00:00  to  2017-06-30 23:00
+    from 2016-06-01 00:00  to  2017-06-30 23:00  ==> drop the rows before 6 am and after 9pm (program)
+                                                     drop data before 2016-06-05 (manually)
+                                                     drop data after 2017-06-21  (manually)
 * Webcam data has been taken HOURLY
-    from 2016-06-05 06:00  to  2017-06-21 21:00
+    from 2016-06-05 06:00  to  2017-06-21 21:00  
 
 * take Date/Time and Weather columns from GHCN data:
     Date/Time as index 
     Weather as target for analysis steps
+
