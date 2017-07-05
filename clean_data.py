@@ -15,7 +15,7 @@ def read_ghcn_data(filename):
 
 def output_csv(data, filename):
     """ Write the data to a CSV file """
-    data.to_csv(dest_path + filename, sep='\t', header=True)
+    data.to_csv(dest_path + filename, header=True)
 
 
 def get_all_csv_filenames():

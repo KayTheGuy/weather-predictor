@@ -7,6 +7,8 @@ REPROTS:
 4) Remove  weather data before 2016-06-05 and after 2017-06-21 (manually)
 5) Remove  weather data before 6 am and after 9pm (program)
 6) Dropped NaN values for weather labels
+7) Merged all weather data
+8) Removed the rows for which there was no corresponding picture
 
 
 
