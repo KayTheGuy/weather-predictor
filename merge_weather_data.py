@@ -51,6 +51,8 @@ def main():
     merged_data['Crspdng_Image'] = merged_data['Date/Time'].apply(match_image_filename)
     merged_data['Has_Image'] = merged_data['Crspdng_Image'].apply(has_corresponding_image)
     merged_data = merged_data[merged_data['Has_Image'] == True]
+    merged_data = merged_data.drop('Has_Image', 1)
+    merged_data = merged_data.reset_index(drop=True)
     output_csv(merged_data, 'merged-weather.csv')
 
 if __name__ == '__main__':

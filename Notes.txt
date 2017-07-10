@@ -9,7 +9,15 @@ REPROTS:
 6) Dropped NaN values for weather labels
 7) Merged all weather data
 8) Removed the rows for which there was no corresponding picture
-
+9) Manually checked several pictures and compared the associated labels. It seems that the data from YVR and downtown images are correlated. So, I 
+   decided not shift or change anything more and start training and testing data.
+10) Did the first stage of analyzing images:
+    problems faced: 
+        1) I had issues with using MultiLabelBinarizer after splitting data into training and testing datasets:
+            because of  the y_test an y_train would have inconsistent shapes
+        2) Using pca(50)  resulted in very low accuracy: less than 10 %
+           Using pca(250) resulted in better accuracy: about 20 %
+           Using pca(350) resulted again in a very low accuracy: about 10 % 
 
 
 
