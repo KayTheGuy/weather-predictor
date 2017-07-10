@@ -4,9 +4,10 @@ from sklearn.svm import SVC
 from scipy.ndimage import imread
 from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MultiLabelBinarizer
 
@@ -44,13 +45,27 @@ def prepare_data():
 
 def make_first_model(X, y):
     """ PCA as transformer
-        Multiclass classifier
+        Multiclass classifier using LogisticRegression
     """
     y_binarized = binarize_y_values(y)
     X_train, X_test, y_train, y_test = train_test_split(X, y_binarized)
     model = make_pipeline(
         PCA(350),
         OneVsRestClassifier(LogisticRegression(multi_class='ovr'))
+    )
+    model.fit(X_train, y_train)
+    print (model.score(X_test, y_test))
+
+def make_second_model(X, y):
+    """ PCA as transformer
+        Using only first labels --> signleclass classification
+        Using SVC
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y[:,0]) 
+    model = make_pipeline(
+        StandardScaler(),
+        PCA(350),
+        SVC(kernel='linear', C=1)
     )
     model.fit(X_train, y_train)
     print (model.score(X_test, y_test))
@@ -63,7 +78,8 @@ def binarize_y_values(y):
 def main():
     """ Main function """
     X, y = prepare_data()
-    make_first_model(X, y)
+    # make_first_model(X, y)
+    make_second_model(X, y)
 
 
 if __name__ == '__main__':

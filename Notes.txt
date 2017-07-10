@@ -14,12 +14,20 @@ REPROTS:
 10) Did the first stage of analyzing images:
     problems faced: 
         1) I had issues with using MultiLabelBinarizer after splitting data into training and testing datasets:
-            because of  the y_test an y_train would have inconsistent shapes
+            because of that, y_test an y_train had inconsistent shapes
         2) Using pca(50)  resulted in very low accuracy: less than 10 %
            Using pca(250) resulted in better accuracy: about 20 %
            Using pca(350) resulted again in a very low accuracy: about 10 % 
 
-
+11) Used single weather labels (first label in multilabl rows) for SVC model: 
+        idea --> I am not sure if multilabls are that important in my predictions: it is better to predict and match an image to a single weather label 
+        more accurately than using multilabls with poor accuracy. Also, I am not sure how accurately those multilables were produced.
+        
+        Using pca(350) and C = 1, rbf kernel --> agian got a an accuracy about: 23 %
+        Using pca(350) and C = 2 , linear kernel --> got a an accuracy about: 35 %
+        Using pca(350) and C = 1e2, linear kernel --> got a an accuracy about: 34 %
+        Using pca(350) and C = 1e-3, linear kernel --> agian got a an accuracy about: 34 %
+        Using StandardScaler, pca(350) and C = 1, linear kernel --> agian got a an accuracy about: 36 %
 
 
 NOTES:
