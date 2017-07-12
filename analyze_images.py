@@ -13,14 +13,16 @@ from sklearn.preprocessing import MultiLabelBinarizer
 
 img_src_path = "../cropped_images/"
 wthr_filename = "../merged-data/merged-weather.csv"
+wthr_filename_4_labels = "../merged-data-4-labels/merged-weather.csv"
 
 image_dataframe = pd.DataFrame()
 
 
 def read_weather_data():
     """ Read weather data from merged CSV file """
-    wthr_data = pd.read_csv(wthr_filename)
-    return wthr_data   #.head(n=200) 
+    # wthr_data = pd.read_csv(wthr_filename)
+    wthr_data = pd.read_csv(wthr_filename_4_labels)
+    return wthr_data  # .head(n=200)
 
 
 def load_image(filename):
@@ -39,7 +41,7 @@ def prepare_data():
     wthr_data['pixels'] = wthr_data['Crspdng_Image'].apply(load_image)
     X = wthr_data['pixels'].values
     X = np.stack(X)
-    y = wthr_data['Weather'].values[:, np.newaxis] 
+    y = wthr_data['Weather'].values[:, np.newaxis]
     return X, y
 
 
@@ -54,32 +56,63 @@ def make_first_model(X, y):
         OneVsRestClassifier(LogisticRegression(multi_class='ovr'))
     )
     model.fit(X_train, y_train)
-    print (model.score(X_test, y_test))
+    print(model.score(X_test, y_test))
+
 
 def make_second_model(X, y):
     """ PCA as transformer
         Using only first labels --> signleclass classification
         Using SVC
     """
-    X_train, X_test, y_train, y_test = train_test_split(X, y[:,0]) 
+    X_train, X_test, y_train, y_test = train_test_split(X, y[:, 0])
     model = make_pipeline(
         StandardScaler(),
         PCA(350),
         SVC(kernel='linear', C=1)
     )
     model.fit(X_train, y_train)
-    print (model.score(X_test, y_test))
+    print(model.score(X_test, y_test))
+
+
+def make_third_model(X, y):
+    """ PCA as transformer
+        Multiclass classifier using SVC
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    model = make_pipeline(
+        StandardScaler(),
+        PCA(500),
+        SVC(kernel='linear', C=1e-2)
+    )
+    model.fit(X_train, y_train)
+    print(model.score(X_test, y_test))
+
+def make_4th_model(X, y):
+    """ PCA as transformer
+        Multiclass classifier using SVC
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    model = make_pipeline(
+        PCA(500),
+        KNeighborsClassifier(n_neighbors=7)
+    )
+    model.fit(X_train, y_train)
+    print(model.score(X_test, y_test))
+
 
 def binarize_y_values(y):
     """ Use multilable binarization for y values """
     mlb = MultiLabelBinarizer()
-    return mlb.fit_transform(y)     
+    return mlb.fit_transform(y)
+
 
 def main():
     """ Main function """
     X, y = prepare_data()
     # make_first_model(X, y)
-    make_second_model(X, y)
+    # make_second_model(X, y)
+    # make_third_model(X, y)
+    make_4th_model(X, y)
 
 
 if __name__ == '__main__':

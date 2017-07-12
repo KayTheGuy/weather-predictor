@@ -30,6 +30,19 @@ REPROTS:
         Using StandardScaler, pca(350) and C = 1, linear kernel --> agian got a an accuracy about: 36 %
 
 
+12) Since having too many labels would result in poor predictions, I decided to reduce the number of labels to only : Clear, Cloudy, Rain, and Snow.
+    So, I went back to cleaning data and modifed clean_data.py and merge_weather_data.py to incroporate these changes.
+
+13) Analyzed 4-labels dataset:
+        Using StandardScaler, pca(350) and C = 1, linear kernel --> 63 %  (yeaaah!)
+        Using StandardScaler, pca(350) and C = 1e-2, linear kernel --> 68 % 
+        Using StandardScaler, pca(500) and C = 1e-2, linear kernel --> 68 % 
+        Using pca(500) and KNeighborsClassifier with n=9 --> 66 % 
+        Using pca(500) and KNeighborsClassifier with n=11 --> 64 % 
+        Using pca(500) and KNeighborsClassifier with n=7 --> 66 % 
+
+
+
 NOTES:
 ======================================================================================================================================================
 

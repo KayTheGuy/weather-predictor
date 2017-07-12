@@ -3,7 +3,9 @@ from os import listdir
 from os.path import isfile, join
 
 src_path = "../cleaned-weather-data/"
+src_path2 = "../cleaned-weather-data-4-labels/"
 dest_path = "../merged-data/"
+dest_path2 = "../merged-data-4-labels/"
 img_path  = "../cropped_images/"
 
 def read_weather_data(filename):
@@ -14,7 +16,8 @@ def read_weather_data(filename):
 
 def output_csv(data, filename):
     """ Write the data to a CSV file """
-    data.to_csv(dest_path + filename, header=True)
+    # data.to_csv(dest_path + filename, header=True)
+    data.to_csv(dest_path2 + filename, header=True)
 
 
 def get_all_csv_filenames():
@@ -45,7 +48,8 @@ def main():
     merged_data = pd.DataFrame()
     for filename in csv_filenames:
         if filename[len(filename) - 3:] == 'csv':
-            csv_data = read_weather_data(src_path + filename)
+            # csv_data = read_weather_data(src_path + filename)
+            csv_data = read_weather_data(src_path2 + filename)
             merged_data = merged_data.append(csv_data)
 
     merged_data['Crspdng_Image'] = merged_data['Date/Time'].apply(match_image_filename)
