@@ -43,12 +43,14 @@ REPROTS:
         Using pca(500) and GaussianNB --> 40 %
 
 
-14) Repeat step 13 for uncropped images:
+14) Repeat step 13 for uncropped images:   (Same resutls ==> use cropped images for further steps of analysis/representation)
     Analyzed 4-labels dataset:
         Using StandardScaler, pca(500) and C = 1e-2, linear kernel --> 70 % 
         Using pca(500) and KNeighborsClassifier with n=7 --> 67 % 
-        Using pca(500) and GaussianNB --> 40.5 % (same)
+        Using pca(500) and GaussianNB --> 40.5 % 
 
+15) Use the best classifier from step 13 (make_third_model in the code) and find how the classifier prediction worked for each of 4 different labels
+    It is a good analysis to see what kind of weather is easier/harder to predict from pictures
 
 
 NOTES:
