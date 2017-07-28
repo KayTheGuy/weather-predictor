@@ -5,6 +5,7 @@ from os.path import isfile, join
 
 src_path = "../katkam-scaled/"
 dest_path = "../cropped_images/"
+dest_path2 = "../uncropped_images/"
 
 
 def crop_save_image(filename):
@@ -15,6 +16,13 @@ def crop_save_image(filename):
     # to be used as index for next steps
     new_filename = filename[24:36] 
     cropped_img.save(dest_path + new_filename + ".jpg")
+
+def save_original_image(filename):
+    """ crop the images to only capture the sky """
+    img = Image.open(filename)
+    # to be used as index for next steps
+    new_filename = filename[24:36] 
+    img.save(dest_path2 + new_filename + ".jpg")
 
 
 def get_all_image_filenames():
@@ -27,6 +35,7 @@ def main():
     image_files = get_all_image_filenames()
     for img in image_files:
         crop_save_image(src_path + img)
+        save_original_image(src_path + img)
 
 
 if __name__ == '__main__':

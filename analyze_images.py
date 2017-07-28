@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.svm import SVC
 from scipy.ndimage import imread
 from sklearn.decomposition import PCA
+from sklearn.naive_bayes import GaussianNB
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
@@ -12,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MultiLabelBinarizer
 
 img_src_path = "../cropped_images/"
+img_src_path2 = "../uncropped_images/"
 wthr_filename = "../merged-data/merged-weather.csv"
 wthr_filename_4_labels = "../merged-data-4-labels/merged-weather.csv"
 
@@ -27,7 +29,8 @@ def read_weather_data():
 
 def load_image(filename):
     """ Read image and reshape the images into a 1D array """
-    pixels = imread(img_src_path + filename)
+    # pixels = imread(img_src_path + filename)
+    pixels = imread(img_src_path2 + filename)
     # store the pixels as: r g b r g b r g b ...
     return pixels.reshape(pixels.shape[0] *
                           pixels.shape[1] *
@@ -60,7 +63,7 @@ def make_first_model(X, y):
 
 
 def make_second_model(X, y):
-    """ PCA as transformer
+    """ PCA and StandardScaler as transformer
         Using only first labels --> signleclass classification
         Using SVC
     """
@@ -75,8 +78,8 @@ def make_second_model(X, y):
 
 
 def make_third_model(X, y):
-    """ PCA as transformer
-        Multiclass classifier using SVC
+    """ PCA and StandardScaler as transformer
+        classifier using SVC
     """
     X_train, X_test, y_train, y_test = train_test_split(X, y)
     model = make_pipeline(
@@ -89,12 +92,24 @@ def make_third_model(X, y):
 
 def make_4th_model(X, y):
     """ PCA as transformer
-        Multiclass classifier using SVC
+        classifier using SVC
     """
     X_train, X_test, y_train, y_test = train_test_split(X, y)
     model = make_pipeline(
         PCA(500),
         KNeighborsClassifier(n_neighbors=7)
+    )
+    model.fit(X_train, y_train)
+    print(model.score(X_test, y_test))
+
+def make_5th_model(X, y):
+    """ PCA as transformer
+        Multiclass classifier using SVC
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    model = make_pipeline(
+        PCA(500),
+        GaussianNB()
     )
     model.fit(X_train, y_train)
     print(model.score(X_test, y_test))
@@ -111,8 +126,9 @@ def main():
     X, y = prepare_data()
     # make_first_model(X, y)
     # make_second_model(X, y)
-    # make_third_model(X, y)
-    make_4th_model(X, y)
+    make_third_model(X, y)
+    # make_4th_model(X, y)
+    # make_5th_model(X, y)
 
 
 if __name__ == '__main__':
