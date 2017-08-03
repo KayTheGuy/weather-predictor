@@ -4,8 +4,10 @@ from os.path import isfile, join
 
 src_path = "../cleaned-weather-data/"
 src_path2 = "../cleaned-weather-data-4-labels/"
+src_path3 = "../cleaned-weather-data-4-features/"
 dest_path = "../merged-data/"
 dest_path2 = "../merged-data-4-labels/"
+dest_path3 = "../merged-data-4-features/"
 img_path  = "../cropped_images/"
 
 def read_weather_data(filename):
@@ -17,13 +19,14 @@ def read_weather_data(filename):
 def output_csv(data, filename):
     """ Write the data to a CSV file """
     # data.to_csv(dest_path + filename, header=True)
-    data.to_csv(dest_path2 + filename, header=True)
+    # data.to_csv(dest_path2 + filename, header=True)
+    data.to_csv(dest_path3 + filename, header=True)
 
 
 def get_all_csv_filenames():
     """ Return all the csv filenames from source directory """
-    image_files = [f for f in listdir(src_path) if isfile(join(src_path, f))]
-    return image_files
+    csv_files = [f for f in listdir(src_path) if isfile(join(src_path, f))]
+    return csv_files
 
 
 def has_corresponding_image(filename):
@@ -49,7 +52,8 @@ def main():
     for filename in csv_filenames:
         if filename[len(filename) - 3:] == 'csv':
             # csv_data = read_weather_data(src_path + filename)
-            csv_data = read_weather_data(src_path2 + filename)
+            # csv_data = read_weather_data(src_path2 + filename)
+            csv_data = read_weather_data(src_path3 + filename)
             merged_data = merged_data.append(csv_data)
 
     merged_data['Crspdng_Image'] = merged_data['Date/Time'].apply(match_image_filename)

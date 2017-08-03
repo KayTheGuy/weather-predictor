@@ -52,6 +52,9 @@ REPROTS:
 15) Use the best classifier from step 13 (make_third_model in the code) and find how the classifier prediction worked for each of 4 different labels
     It is a good analysis to see what kind of weather is easier/harder to predict from pictures
 
+16) Modify "clean_data.py" and "merge_weather_data.py" to clean the data and keep Temp, Wind Speed, Wind Direction, and Visibility 
+    and merge the result with their corresponding each images
+
 
 NOTES:
 ======================================================================================================================================================
