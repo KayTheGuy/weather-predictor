@@ -63,6 +63,9 @@ REPROTS:
             for Temp --> the score was 0.706210191083
             for Wind Sepeed --> the score was 0.480095541401
 
+18) Final step: predictions using images was most successful for Temperature. Report the success rate for four different Temperature categories 
+    (similar to step 15): to report what kind of Temp label is easier/harder to predict from pictures
+
 
 NOTES:
 ======================================================================================================================================================

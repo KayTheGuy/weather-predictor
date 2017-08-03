@@ -19,23 +19,25 @@ img_src_path = "../cropped_images/"
 img_src_path2 = "../uncropped_images/"
 wthr_filename = "../merged-data/merged-weather.csv"
 wthr_filename_4_labels = "../merged-data-4-labels/merged-weather.csv"
-wthr_filename_4_features= "../merged-data-4-features/merged-weather.csv"
+wthr_filename_4_features = "../merged-data-4-features/merged-weather.csv"
 
 image_dataframe = pd.DataFrame()
 
+
 def read_4_features():
-    """ Read Temp, Wind Speed, Wind Direction, and Visibility 
+    """ Read Temp, Wind Speed, Wind Direction, and Visibility
          Categorize the numerical data
-            Temp (°C): 
+            Temp (°C):
                         t < 5               =>  Cold
                         5 <= t < 15         =>  Moderate
                         15 <= t <= 25       =>  Warm
-                        25 <= t             =>  Hot
-            
+                        25 <= t             =>  Hot    (no record has this label !!)
+
             Wind Spd (km/h):
                 # print (data_4_features['Wind Spd (km/h)'].max(axis=0))  =>  returned 59 =~ 60
                 # print (data_4_features['Wind Spd (km/h)'].min(axis=0))  =>  returned 1  =~ 0
-                # print (data_4_features['Wind Spd (km/h)'].mean(axis=0))  =>  returned   =~ 15  
+                # print (data_4_features['Wind Spd (km/h)'].mean(axis=0))  =>
+                # returned   =~ 15
 
                         s < 10               => Slow
                         10 <= s < 20         => Moderate
@@ -45,18 +47,23 @@ def read_4_features():
     """
     data_4_features = pd.read_csv(wthr_filename_4_features)
     # categorize features
-    data_4_features['Temp_Label'] = data_4_features['Temp (°C)'].apply(label_temp)
-    data_4_features['Wind_Speed_Label'] = data_4_features['Wind Spd (km/h)'].apply(label_wind_speed)
+    data_4_features['Temp_Label'] = data_4_features['Temp (°C)'].apply(
+        label_temp)
+    data_4_features['Wind_Speed_Label'] = data_4_features['Wind Spd (km/h)'].apply(
+        label_wind_speed)
     return data_4_features
+
 
 def prepare_4_features_data():
     data_4_features = read_4_features()
-    data_4_features['pixels'] = data_4_features['Crspdng_Image'].apply(load_image)
+    data_4_features['pixels'] = data_4_features['Crspdng_Image'].apply(
+        load_image)
     X = data_4_features['pixels'].values
     X = np.stack(X)
     y_temp = data_4_features['Temp_Label'].values[:, np.newaxis]
     y_wind_speed = data_4_features['Wind_Speed_Label'].values[:, np.newaxis]
     return X, y_temp, y_wind_speed
+
 
 def label_temp(temp):
     if temp < 5:
@@ -68,6 +75,7 @@ def label_temp(temp):
     else:
         return 'Hot'
 
+
 def label_wind_speed(speed):
     if speed < 10:
         return 'Slow'
@@ -77,6 +85,7 @@ def label_wind_speed(speed):
         return 'Fast'
     else:
         return 'Very Fast'
+
 
 def read_weather_data():
     """ Read weather data from merged CSV file """
@@ -96,7 +105,7 @@ def load_image(filename):
 
 
 def prepare_data():
-    """ Return whole data: pixels in X and weather labels in y 
+    """ Return whole data: pixels in X and weather labels in y
     """
     wthr_data = read_weather_data()
     wthr_data['pixels'] = wthr_data['Crspdng_Image'].apply(load_image)
@@ -234,6 +243,77 @@ def report_label_predictions(X, y):
     plt.show()
 
 
+def report__temp_label_predictions(X, y):
+    """ PCA and StandardScaler as transformer
+        classifier using SVC
+    """
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    model = make_pipeline(
+        StandardScaler(),
+        PCA(500),
+        SVC(kernel='linear', C=1e-2)
+    )
+
+    # count the number of 4 labels in y_test
+    label_totals = count_temp_labels(y_test)
+
+    correct_predict_stats = {
+        'Cold': 0,
+        'Moderate': 0,
+        'Warm': 0,
+        # 'Hot': 0,
+    }
+
+    # make predictions
+    model.fit(X_train, y_train)
+    y_predicted = model.predict(X_test)
+
+    # count the correct prediction for each label
+    for i in range(y_predicted.shape[0]):
+        if y_test[i][0] == y_predicted[i]:
+            # count up correct prediction for the lable
+            correct_predict_stats[y_predicted[i]] += 1
+
+    # calculate the percentage of correct label predictions
+    correct_predict_stats['Cold'] /= label_totals[0]
+    correct_predict_stats['Moderate'] /= label_totals[1]
+    correct_predict_stats['Warm'] /= label_totals[2]
+    # correct_predict_stats['Hot'] /= label_totals[3]
+
+    # NOTE : since there's no record labeled as hot, it is removed from report
+    seaborn.set()
+    plt.title('Temperature Labels Classification Success Rate')
+    plt.xlabel('Temperature labels')
+    plt.ylabel('Classification Success Rate (%)')
+    x_labels = ['Cold', 'Moderate', 'Warm']
+    y_labels = [
+        correct_predict_stats['Cold'] * 100,
+        correct_predict_stats['Moderate'] * 100,
+        correct_predict_stats['Warm'] * 100,
+        # correct_predict_stats['Hot'] * 100
+    ]
+
+    seaborn.barplot(x=x_labels, y=y_labels)
+    plt.show()
+
+def count_temp_labels(labels):
+    cold_count = 0
+    moderate_count = 0
+    warm_count = 0
+    hot_count = 0
+
+    for label in labels:
+            if label == 'Cold':
+                cold_count += 1
+            elif label == 'Moderate':
+                moderate_count += 1
+            elif label == 'Warm':
+                warm_count += 1
+            elif label == 'Hot':
+                hot_count += 1
+    return [cold_count, moderate_count, warm_count, hot_count]
+
+
 def count_labels(labels):
     rain_count = 0
     snow_count = 0
@@ -264,8 +344,9 @@ def main():
     # report_label_predictions(X, y)
     # make_third_model(X_4_feat, y_temp)
     # make_third_model(X_4_feat, y_wind_speed)
-    make_4th_model(X_4_feat, y_temp)
-    make_4th_model(X_4_feat, y_wind_speed)
+    # make_4th_model(X_4_feat, y_temp)
+    # make_4th_model(X_4_feat, y_wind_speed)
+    report__temp_label_predictions(X_4_feat, y_temp)
 
 
 
