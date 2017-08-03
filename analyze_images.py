@@ -19,9 +19,64 @@ img_src_path = "../cropped_images/"
 img_src_path2 = "../uncropped_images/"
 wthr_filename = "../merged-data/merged-weather.csv"
 wthr_filename_4_labels = "../merged-data-4-labels/merged-weather.csv"
+wthr_filename_4_features= "../merged-data-4-features/merged-weather.csv"
 
 image_dataframe = pd.DataFrame()
 
+def read_4_features():
+    """ Read Temp, Wind Speed, Wind Direction, and Visibility 
+         Categorize the numerical data
+            Temp (°C): 
+                        t < 5               =>  Cold
+                        5 <= t < 15         =>  Moderate
+                        15 <= t <= 25       =>  Warm
+                        25 <= t             =>  Hot
+            
+            Wind Spd (km/h):
+                # print (data_4_features['Wind Spd (km/h)'].max(axis=0))  =>  returned 59 =~ 60
+                # print (data_4_features['Wind Spd (km/h)'].min(axis=0))  =>  returned 1  =~ 0
+                # print (data_4_features['Wind Spd (km/h)'].mean(axis=0))  =>  returned   =~ 15  
+
+                        s < 10               => Slow
+                        10 <= s < 20         => Moderate
+                        20 <= s < 30         => Fast
+                        30 <= s              => Very Fast
+
+    """
+    data_4_features = pd.read_csv(wthr_filename_4_features)
+    # categorize features
+    data_4_features['Temp_Label'] = data_4_features['Temp (°C)'].apply(label_temp)
+    data_4_features['Wind_Speed_Label'] = data_4_features['Wind Spd (km/h)'].apply(label_wind_speed)
+    return data_4_features
+
+def prepare_4_features_data():
+    data_4_features = read_4_features()
+    data_4_features['pixels'] = data_4_features['Crspdng_Image'].apply(load_image)
+    X = data_4_features['pixels'].values
+    X = np.stack(X)
+    y_temp = data_4_features['Temp_Label'].values[:, np.newaxis]
+    y_wind_speed = data_4_features['Wind_Speed_Label'].values[:, np.newaxis]
+    return X, y_temp, y_wind_speed
+
+def label_temp(temp):
+    if temp < 5:
+        return 'Cold'
+    elif temp < 15:
+        return 'Moderate'
+    elif temp < 25:
+        return 'Warm'
+    else:
+        return 'Hot'
+
+def label_wind_speed(speed):
+    if speed < 10:
+        return 'Slow'
+    elif speed < 20:
+        return 'Moderate'
+    elif speed < 30:
+        return 'Fast'
+    else:
+        return 'Very Fast'
 
 def read_weather_data():
     """ Read weather data from merged CSV file """
@@ -199,13 +254,19 @@ def count_labels(labels):
 
 def main():
     """ Main function """
-    X, y = prepare_data()
+    # X, y = prepare_data()
+    X_4_feat, y_temp, y_wind_speed = prepare_4_features_data()
     # make_first_model(X, y)
     # make_second_model(X, y)
     # make_third_model(X, y)
     # make_4th_model(X, y)
     # make_5th_model(X, y)
-    report_label_predictions(X, y)
+    # report_label_predictions(X, y)
+    # make_third_model(X_4_feat, y_temp)
+    # make_third_model(X_4_feat, y_wind_speed)
+    make_4th_model(X_4_feat, y_temp)
+    make_4th_model(X_4_feat, y_wind_speed)
+
 
 
 if __name__ == '__main__':
